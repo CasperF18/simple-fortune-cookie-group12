@@ -29,3 +29,18 @@ jobs:
       - name: Test frontend
         run: go test ./...
         working-directory: frontend
+
+
+  deploy:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up kubeconfig
+        run: echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
+
+      - name: Deploy to Kubernetes
+        run: kubectl --kubeconfig kubeconfig apply -f k8s/
