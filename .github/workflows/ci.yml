@@ -31,6 +31,36 @@ jobs:
         working-directory: frontend
 
 
+  availability-test:
+    needs: build-and-test
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up kubeconfig
+        run: echo "${{ secrets.KUBECONFIG }}" | base64 -d > kubeconfig
+
+      - name: Deploy test version
+        run: kubectl --kubeconfig kubeconfig apply -f k8s-test/
+
+      - name: Wait for test deployment
+        run: |
+          kubectl --kubeconfig kubeconfig rollout status deployment/fortune-backend-test --timeout=120s
+          kubectl --kubeconfig kubeconfig rollout status deployment/fortune-frontend-test --timeout=120s
+
+      - name: Test application availability
+        run: |
+          kubectl --kubeconfig kubeconfig port-forward service/frontend-test 8080:8080 &
+          sleep 5
+          ./test-availability.sh http://localhost:8080
+
+      - name: Clean up test deployment
+        if: always()
+        run: kubectl --kubeconfig kubeconfig delete -f k8s-test/ --ignore-not-found
+
+
   deploy:
     needs: build-and-test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
