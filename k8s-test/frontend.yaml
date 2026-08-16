@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fortune-frontend-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fortune-frontend-test
+  template:
+    metadata:
+      labels:
+        app: fortune-frontend-test
+    spec:
+      containers:
+        - name: frontend
+          image: ghcr.io/casperf18/simple-fortune-cookie-group12-frontend:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: BACKEND_DNS
+              value: backend-test
+            - name: BACKEND_PORT
+              value: "9000"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-test
+spec:
+  selector:
+    app: fortune-frontend-test
+  ports:
+    - port: 8080
+      targetPort: 8080

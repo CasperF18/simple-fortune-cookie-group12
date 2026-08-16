@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fortune-backend-test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fortune-backend-test
+  template:
+    metadata:
+      labels:
+        app: fortune-backend-test
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/casperf18/simple-fortune-cookie-group12-backend:latest
+          ports:
+            - containerPort: 9000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-test
+spec:
+  selector:
+    app: fortune-backend-test
+  ports:
+    - port: 9000
+      targetPort: 9000
