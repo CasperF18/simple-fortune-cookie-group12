@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: peterf18/fortune-backend:v1
+          image: ghcr.io/casperf18/simple-fortune-cookie-group12-backend:latest
           ports:
             - containerPort: 9000
           env:
