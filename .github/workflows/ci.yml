@@ -30,6 +30,9 @@ jobs:
         run: go test ./...
         working-directory: frontend
 
+      - name: Deliberate CI failure
+        run: exit 1
+
 
   deploy:
     needs: build-and-test
