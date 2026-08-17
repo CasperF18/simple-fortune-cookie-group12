@@ -30,6 +30,18 @@ jobs:
         run: go test ./...
         working-directory: frontend
 
+      - name: Lint backend
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.12
+          working-directory: backend
+
+      - name: Lint frontend
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.12
+          working-directory: frontend
+
 
   availability-test:
     needs: build-and-test
