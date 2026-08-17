@@ -168,13 +168,17 @@ func (h *fortuneHandler) Create(w http.ResponseWriter, r *http.Request) {
 }
 
 func internalServerError(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusInternalServerError)
-	w.Write([]byte("internal server error"))
+    w.WriteHeader(http.StatusInternalServerError)
+    if _, err := w.Write([]byte("internal server error")); err != nil {
+        fmt.Println("failed to write response:", err)
+    }
 }
 
 func notFound(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotFound)
-	w.Write([]byte("not found"))
+    w.WriteHeader(http.StatusNotFound)
+    if _, err := w.Write([]byte("not found")); err != nil {
+        fmt.Println("failed to write response:", err)
+    }
 }
 
 func main() {
